@@ -149,6 +149,62 @@ public:
     }
 };
 
+// Абстрактный класс MediaContent
+class MediaContent {
+protected:
+    string title;  // Название
+    string creator; // Создатель (например, исполнитель или ведущий)
+    float duration; // Продолжительность в секундах
+
+public:
+    MediaContent(const string& t, const string& c, float d)
+        : title(t), creator(c), duration(d) {
+    }
+
+    virtual ~MediaContent() = default;
+
+    // Чисто виртуальная функция для получения информации о контенте
+    virtual string getInfo() const = 0;
+
+    // Общая функция для всех типов контента
+    void play() const {
+        cout << "Playing: " << title << " (" << duration << " sec)" << endl;
+    }
+};
+
+// Производный класс для музыкального трека
+class MusicTrack : public MediaContent {
+private:
+    string genre;
+
+public:
+    MusicTrack(const string& t, const string& c, float d, const string& g)
+        : MediaContent(t, c, d), genre(g) {
+    }
+
+    string getInfo() const override {
+        return "Music Track: " + title + " by " + creator +
+            " (Duration: " + to_string(duration) + " sec, Genre: " + genre + ")";
+    }
+};
+
+// Производный класс для аудиокниги
+class Audiobook : public MediaContent {
+private:
+    string narrator;
+    int chapters;
+
+public:
+    Audiobook(const string& t, const string& c, float d, const string& n, int ch)
+        : MediaContent(t, c, d), narrator(n), chapters(ch) {
+    }
+
+    string getInfo() const override {
+        return "Audiobook: " + title + " by " + creator +
+            " (Duration: " + to_string(duration) + " sec)" +
+            "\nNarrator: " + narrator + ", Chapters: " + to_string(chapters);
+    }
+};
 
 class Playlist {
 private:
@@ -350,4 +406,23 @@ int main() {
     cout << "\nЕсли функция getInfo() не виртуальная:\n";
     ptrBase->printInfo();  // Всегда вызывает базовую версию
     ptrPodcast->printInfo();  // Также вызывает базовую версию
+
+    // Создаем список указателей на MediaContent
+    vector<MediaContent*> mediaLibrary;
+
+    // Добавляем различные типы медиа-контента
+    mediaLibrary.push_back(new MusicTrack("Song A", "Artist 1", 210.0f, "Pop"));
+    mediaLibrary.push_back(new Audiobook("Book B", "Author 2", 7200.0f, "Narrator X", 15));
+
+    // Перебираем и выводим информацию о каждом контенте
+    for (const auto& content : mediaLibrary) {
+        cout << content->getInfo() << endl;
+        content->play();
+        cout << endl;
+    }
+
+    // Удаляем объекты из памяти
+    for (auto& content : mediaLibrary) {
+        delete content;
+    }
 }
