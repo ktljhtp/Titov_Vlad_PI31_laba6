@@ -64,6 +64,36 @@ class PodcastContent extends Content {
     }
 }
 
+class MediaContent {
+    protected String title; // Protected поле доступно в производных классах
+    protected float duration;
+    protected String format;
+
+    public MediaContent(String title, float duration, String format) {
+        this.title = title;
+        this.duration = duration;
+        this.format = format;
+    }
+
+    public void print() {
+        System.out.println("Media Content: " + title + " (Duration: " + duration + " sec, Format: " + format + ")");
+    }
+}
+
+// Производный класс MusicContent
+class MusicContent extends MediaContent {
+    private String artist;
+
+    public MusicContent(String title, float duration, String format, String artist) {
+        super(title, duration, format); // Используем protected поля из базового класса
+        this.artist = artist;
+    }
+
+    @Override
+    public void print() {
+        System.out.println("Music: " + title + " by " + artist + " (Duration: " + duration + " sec, Format: " + format + ")");
+    }
+}
 
 class AudioSettings {
     private int volume;
@@ -262,5 +292,10 @@ public class Main {
         }
 
         scanner.close();
+
+        MusicContent music = new MusicContent("Imagine", 183, "MP3", "John Lennon");
+
+        music.print();
+        podcast.print();
     }
 }
