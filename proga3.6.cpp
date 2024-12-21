@@ -96,18 +96,17 @@ protected:
     string format;  // Формат (например, MP3)
 
 public:
+    // Конструктор базового класса
+    Content(const string& t, const string& a, float d, const string& f)
+        : title(t), artist(a), duration(d), format(f) {
+    }
+
     virtual void print() const {
         cout << "Track: " << title << " by " << artist
             << " (Duration: " << duration << " sec, Format: " << format << ")\n";
     }
-
-    void set(const string& t, const string& a, float d, const string& f) {
-        title = t;
-        artist = a;
-        duration = d;
-        format = f;
-    }
 };
+
 
 
 class PodcastContent : public Content {
@@ -117,22 +116,16 @@ private:
     string description; // Краткое описание
 
 public:
-    void setPodcastContent(const string& t, const string& a, float d, const string& f,
-        const string& h, int eCount, const string& desc) {
-        title = t;
-        artist = a;
-        duration = d;
-        format = f;
-
-        host = h;
-        episodeCount = eCount;
-        description = desc;
+    // Конструктор производного класса
+    PodcastContent(const string& t, const string& a, float d, const string& f,
+        const string& h, int eCount, const string& desc)
+        : Content(t, a, d, f), // Вызов конструктора базового класса
+        host(h), episodeCount(eCount), description(desc) {
     }
 
     void print() const override {
         // Вызов метода базового класса
         Content::print();
-        // Дополнительная информация о подкасте
         cout << "Host: " << host
             << "\nEpisodes: " << episodeCount
             << "\nDescription: " << description << endl;
