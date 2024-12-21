@@ -89,25 +89,26 @@ public:
 
 
 class Content {
-private:
+protected:
     string title;  // Название трека
     string artist; // Исполнитель
-    float duration;   // Продолжительность в секундах
+    float duration; // Продолжительность в секундах
     string format;  // Формат (например, MP3)
+
 public:
     void set(const string& t, const string& a, float d, const string& f) {
-        this->title = t;
-        this->artist = a;
-        this->duration = d;
-        this->format = f;
+        title = t;
+        artist = a;
+        duration = d;
+        format = f;
     }
+
     virtual void print() const {
-        cout << "Track: " << title << " by " << artist << " (Duration: " << duration << " sec, Format: " << format << ")\n";
-    }
-    float getDuration() const {
-        return duration;
+        cout << "Track: " << title << " by " << artist
+            << " (Duration: " << duration << " sec, Format: " << format << ")\n";
     }
 };
+
 
 class PodcastContent : public Content {
 private:
@@ -118,29 +119,23 @@ private:
 public:
     void setPodcastContent(const string& t, const string& a, float d, const string& f,
         const string& h, int eCount, const string& desc) {
-        set(t, a, d, f); // Вызов метода базового класса
+        // Прямой доступ к полям базового класса через protected
+        title = t;
+        artist = a;
+        duration = d;
+        format = f;
+
         host = h;
         episodeCount = eCount;
         description = desc;
     }
 
-    void print() const override { // Переопределение метода print
-        Content::print(); // Вызов метода базового класса
+    void print() const override {
+        cout << "Podcast: " << title << " by " << artist
+            << " (Duration: " << duration << " sec, Format: " << format << ")\n";
         cout << "Host: " << host
             << "\nEpisodes: " << episodeCount
             << "\nDescription: " << description << endl;
-    }
-
-    string getHost() const {
-        return host;
-    }
-
-    int getEpisodeCount() const {
-        return episodeCount;
-    }
-
-    string getDescription() const {
-        return description;
     }
 };
 
