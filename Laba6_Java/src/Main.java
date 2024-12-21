@@ -80,6 +80,23 @@ class MediaContent {
     }
 }
 
+// Производный класс
+class VideoContent extends MediaContent {
+    private String resolution; // Разрешение видео (например, 1080p)
+
+    // Конструктор производного класса
+    public VideoContent(String title, float duration, String resolution) {
+        super(title, duration); // Вызов конструктора базового класса
+        this.resolution = resolution;
+        System.out.println("Конструктор VideoContent вызван.");
+    }
+
+    // Метод для вывода информации
+    public void printInfo() {
+        System.out.println("Video: " + title + " (Duration: " + duration + " sec, Resolution: " + resolution + ")");
+    }
+}
+
 // Производный класс MusicContent
 class MusicContent extends MediaContent {
     private String artist;
@@ -304,7 +321,10 @@ public class Main {
 
         System.out.println("\n=== Music ===");
         music.printInfo(); // Вызов метода с использованием базового метода
-        
+
         podcast.print();
+
+        VideoContent video = new VideoContent("Nature Documentary", 1800, "1080p");
+        video.printInfo();
     }
 }
