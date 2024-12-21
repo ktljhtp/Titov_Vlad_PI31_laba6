@@ -101,11 +101,46 @@ public:
         this->duration = d;
         this->format = f;
     }
-    void print() const {
+    virtual void print() const {
         cout << "Track: " << title << " by " << artist << " (Duration: " << duration << " sec, Format: " << format << ")\n";
     }
     float getDuration() const {
         return duration;
+    }
+};
+
+class PodcastContent : public Content {
+private:
+    string host;       // Ведущий подкаста
+    int episodeCount;  // Количество эпизодов
+    string description; // Краткое описание
+
+public:
+    void setPodcastContent(const string& t, const string& a, float d, const string& f,
+        const string& h, int eCount, const string& desc) {
+        set(t, a, d, f); // Вызов метода базового класса
+        host = h;
+        episodeCount = eCount;
+        description = desc;
+    }
+
+    void print() const override { // Переопределение метода print
+        Content::print(); // Вызов метода базового класса
+        cout << "Host: " << host
+            << "\nEpisodes: " << episodeCount
+            << "\nDescription: " << description << endl;
+    }
+
+    string getHost() const {
+        return host;
+    }
+
+    int getEpisodeCount() const {
+        return episodeCount;
+    }
+
+    string getDescription() const {
+        return description;
     }
 };
 
@@ -283,4 +318,10 @@ int main() {
     }
     cout << "Текущий прогресс трека: " << trackProgress.currentTime << " секунд\n";
 
+    // Работа с PodcastContent
+    PodcastContent podcast;
+    podcast.setPodcastContent("Научный подкаст", "Science Weekly", 3600.0f, "MP3",
+        "Дмитрий Иванов", 24, "Подкаст о науке и технологиях.");
+    cout << "\nИнформация о подкасте:\n";
+    podcast.print();
 }
