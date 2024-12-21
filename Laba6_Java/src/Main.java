@@ -36,7 +36,6 @@ class Content {
     }
 }
 
-
 class PodcastContent extends Content {
     private String host;        // Ведущий подкаста
     private int episodeCount;   // Количество эпизодов
@@ -63,6 +62,22 @@ class PodcastContent extends Content {
         System.out.println(getInfo());
     }
 }
+
+// Производный класс для аудио
+class AudioContent extends MediaContent {
+    private String audioFormat;
+
+    public AudioContent(String title, float duration, String audioFormat) {
+        super(title, duration);
+        this.audioFormat = audioFormat;
+    }
+
+    @Override
+    public void play() {
+        System.out.println("Playing audio: " + title + " in format " + audioFormat);
+    }
+}
+
 
 // Абстрактный класс
 abstract class MediaContent {
@@ -309,6 +324,8 @@ public class Main {
 
         // Создаем экземпляры производных классов
         mediaLibrary[0] = new VideoContent("Documentary", 3600, "1080p");
+        mediaLibrary[1] = new AudioContent("Classical Symphony", 2400, "MP3");
+
 
         // Демонстрация полиморфизма
         for (MediaContent content : mediaLibrary) {
