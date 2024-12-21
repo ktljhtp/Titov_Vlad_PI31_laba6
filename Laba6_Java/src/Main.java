@@ -92,7 +92,6 @@ class Podcast implements Playable {
     }
 }
 
-
 class PodcastContent extends Content {
     private String host;        // Ведущий подкаста
     private int episodeCount;   // Количество эпизодов
@@ -134,7 +133,6 @@ class AudioContent extends MediaContent {
         System.out.println("Playing audio: " + title + " in format " + audioFormat);
     }
 }
-
 
 // Абстрактный класс
 abstract class MediaContent {
@@ -223,52 +221,6 @@ class PlaylistSettings {
     }
 }
 
-class Playlist {
-    private String name;
-    private PlaylistSettings settings = new PlaylistSettings();
-    private ArrayList<Content> tracks = new ArrayList<>();
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void inputSettings(Scanner scanner) {
-        settings.inputSettings(scanner);
-    }
-
-    public void addTracks(Scanner scanner) {
-        System.out.print("Введите количество треков для добавления в плейлист: ");
-        int count = scanner.nextInt();
-        tracks.clear();
-
-        for (int i = 0; i < count; i++) {
-            System.out.print("Введите название трека: ");
-            String title = scanner.next();
-            System.out.print("Введите исполнителя: ");
-            String artist = scanner.next();
-            System.out.print("Продолжительность в секундах: ");
-            float duration = scanner.nextFloat();
-            System.out.print("Введите формат трека: ");
-            String format = scanner.next();
-            Content track = new Content();
-            track.set(title, artist, duration, format);
-            tracks.add(track);
-        }
-    }
-
-    public void printPlaylistInfo() {
-        System.out.println("Плейлист: " + name);
-        for (int i = 0; i < tracks.size(); i++) {
-            System.out.print("Трек " + (i + 1) + ": ");
-            tracks.get(i).print();
-        }
-    }
-
-    public void printSettings() {
-        settings.print();
-    }
-}
-
 class User {
     private String username;
     private AudioSettings audioSettings = new AudioSettings();
@@ -317,6 +269,74 @@ class User {
         }
     }
 }
+
+class Playlist implements Cloneable {
+    private String name;
+    private PlaylistSettings settings = new PlaylistSettings();
+    private ArrayList<Content> tracks = new ArrayList<>();
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void inputSettings(Scanner scanner) {
+        settings.inputSettings(scanner);
+    }
+
+    public void addTracks(Scanner scanner) {
+        System.out.print("Введите количество треков для добавления в плейлист: ");
+        int count = scanner.nextInt();
+        tracks.clear();
+
+        for (int i = 0; i < count; i++) {
+            System.out.print("Введите название трека: ");
+            String title = scanner.next();
+            System.out.print("Введите исполнителя: ");
+            String artist = scanner.next();
+            System.out.print("Продолжительность в секундах: ");
+            float duration = scanner.nextFloat();
+            System.out.print("Введите формат трека: ");
+            String format = scanner.next();
+            Content track = new Content();
+            track.set(title, artist, duration, format);
+            tracks.add(track);
+        }
+    }
+
+    public void printPlaylistInfo() {
+        System.out.println("Плейлист: " + name);
+        for (int i = 0; i < tracks.size(); i++) {
+            System.out.print("Трек " + (i + 1) + ": ");
+            tracks.get(i).print();
+        }
+    }
+
+    public void printSettings() {
+        settings.print();
+    }
+
+    // Мелкое клонирование
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    // Глубокое клонирование
+    public Playlist deepClone() throws CloneNotSupportedException {
+        Playlist clonedPlaylist = (Playlist) super.clone(); // Мелкое клонирование
+        clonedPlaylist.settings = new PlaylistSettings();
+        clonedPlaylist.tracks = new ArrayList<>();
+
+        // Клонируем каждый трек
+        for (Content track : this.tracks) {
+            Content clonedTrack = new Content();
+            clonedTrack.set(track.getTitle(), track.getArtist(), track.getDuration(), track.getFormat());
+            clonedPlaylist.tracks.add(clonedTrack);
+        }
+        return clonedPlaylist;
+    }
+}
+
 
 public class Main {
     public static void main(String[] args) {
@@ -404,5 +424,35 @@ public class Main {
             playable.stop();
             System.out.println();
         }
+
+        scanner = new Scanner(System.in);
+
+        // Создаем плейлист
+        Playlist originalPlaylist = new Playlist();
+        originalPlaylist.setName("My Playlist");
+        originalPlaylist.addTracks(scanner);
+        originalPlaylist.inputSettings(scanner);
+
+        // Выводим оригинальный плейлист
+        System.out.println("\n=== Original Playlist ===");
+        originalPlaylist.printPlaylistInfo();
+
+        try {
+            Playlist shallowClonedPlaylist = (Playlist) originalPlaylist.clone();
+            System.out.println("\n=== Shallow Cloned Playlist ===");
+            shallowClonedPlaylist.printPlaylistInfo();
+
+            Playlist deepClonedPlaylist = originalPlaylist.deepClone();
+            System.out.println("\n=== Deep Cloned Playlist ===");
+            deepClonedPlaylist.printPlaylistInfo();
+        } catch (CloneNotSupportedException e) {
+            System.err.println("Error during cloning: " + e.getMessage());
+        }
+
+        // Изменяем оригинальный плейлист
+        System.out.println("\n=== Modifying Original Playlist ===");
+        originalPlaylist.addTracks(scanner);
+
+        scanner.close();
     }
 }
