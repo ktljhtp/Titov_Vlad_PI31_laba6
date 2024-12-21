@@ -96,16 +96,16 @@ protected:
     string format;  // Формат (например, MP3)
 
 public:
+    virtual void print() const {
+        cout << "Track: " << title << " by " << artist
+            << " (Duration: " << duration << " sec, Format: " << format << ")\n";
+    }
+
     void set(const string& t, const string& a, float d, const string& f) {
         title = t;
         artist = a;
         duration = d;
         format = f;
-    }
-
-    virtual void print() const {
-        cout << "Track: " << title << " by " << artist
-            << " (Duration: " << duration << " sec, Format: " << format << ")\n";
     }
 };
 
@@ -119,7 +119,6 @@ private:
 public:
     void setPodcastContent(const string& t, const string& a, float d, const string& f,
         const string& h, int eCount, const string& desc) {
-        // Прямой доступ к полям базового класса через protected
         title = t;
         artist = a;
         duration = d;
@@ -131,13 +130,15 @@ public:
     }
 
     void print() const override {
-        cout << "Podcast: " << title << " by " << artist
-            << " (Duration: " << duration << " sec, Format: " << format << ")\n";
+        // Вызов метода базового класса
+        Content::print();
+        // Дополнительная информация о подкасте
         cout << "Host: " << host
             << "\nEpisodes: " << episodeCount
             << "\nDescription: " << description << endl;
     }
 };
+
 
 class Playlist {
 private:
