@@ -96,32 +96,34 @@ protected:
     string format;  // Формат (например, MP3)
 
 public:
-    // Конструктор по умолчанию
-    Content() : title(""), artist(""), duration(0.0f), format("") {}
-
     // Конструктор с параметрами
-    Content(const string& t, const string& a, float d, const string& f)
+    Content(const string& t = "", const string& a = "", float d = 0.0f, const string& f = "")
         : title(t), artist(a), duration(d), format(f) {
     }
 
-    // Оператор присваивания
-    Content& operator=(const Content& other) {
-        if (this != &other) {
-            title = other.title;
-            artist = other.artist;
-            duration = other.duration;
-            format = other.format;
-        }
-        return *this;
+    // Виртуальная функция для получения информации
+    virtual string getInfo() const {
+        return "Track: " + title + " by " + artist +
+            " (Duration: " + to_string(duration) + " sec, Format: " + format + ")";
     }
 
-    virtual void print() const {
-        cout << "Track: " << title << " by " << artist
-            << " (Duration: " << duration << " sec, Format: " << format << ")\n";
+    void set(const string& t, const string& a, float d, const string& f) {
+        title = t;
+        artist = a;
+        duration = d;
+        format = f;
+    }
+
+    // Невиртуальная функция для демонстрации вызова getInfo()
+    void printInfo() const {
+        cout << getInfo() << endl;  // Вызов виртуальной функции
+    }
+
+    void print() const {
+        cout << "Title: " << title << "\nArtist: " << artist
+            << "\nDuration: " << duration << " sec\nFormat: " << format << endl;
     }
 };
-
-
 
 
 class PodcastContent : public Content {
@@ -131,36 +133,21 @@ private:
     string description; // Краткое описание
 
 public:
-    // Конструктор по умолчанию
-    PodcastContent() : Content(), host(""), episodeCount(0), description("") {}
-
     // Конструктор с параметрами
     PodcastContent(const string& t, const string& a, float d, const string& f,
         const string& h, int eCount, const string& desc)
         : Content(t, a, d, f), host(h), episodeCount(eCount), description(desc) {
     }
 
-    // Оператор присваивания
-    PodcastContent& operator=(const Content& baseObj) {
-        // Вызов оператора присваивания базового класса
-        Content::operator=(baseObj);
-
-        // Поля производного класса остаются неизменными
-        host = "Default Host";   // Можно установить значения по умолчанию
-        episodeCount = 0;
-        description = "Default Description";
-
-        return *this;
-    }
-
-    void print() const override {
-        Content::print(); // Вызов метода базового класса
-        cout << "Host: " << host
-            << "\nEpisodes: " << episodeCount
-            << "\nDescription: " << description << endl;
+    // Переопределение виртуальной функции
+    string getInfo() const override {
+        return "Podcast: " + title + " by " + artist +
+            " (Duration: " + to_string(duration) + " sec, Format: " + format + ")" +
+            "\nHost: " + host +
+            "\nEpisodes: " + to_string(episodeCount) +
+            "\nDescription: " + description;
     }
 };
-
 
 
 class Playlist {
@@ -339,16 +326,28 @@ int main() {
 
     Content baseContent("Музыкальный трек", "Artist A", 180.0f, "MP3");
 
+    // Создаем объект базового класса
+    Content baseContent("Музыкальный трек", "Artist A", 180.0f, "MP3");
+
     // Создаем объект производного класса
-    PodcastContent podcast("Подкаст о природе", "Science Weekly", 3600.0f, "MP3",
-        "Дмитрий Иванов", 24, "Научный подкаст");
+    PodcastContent podcast("Научный подкаст", "Science Weekly", 3600.0f, "MP3",
+        "Дмитрий Иванов", 24, "Интересные факты о науке");
 
-    cout << "До присваивания:\n";
-    podcast.print();
+    // Демонстрация вызова через невиртуальную функцию
+    cout << "Вызов через невиртуальную функцию базового класса:\n";
+    baseContent.printInfo();
+    podcast.printInfo();
 
-    // Присваивание объекта базового класса объекту производного класса
-    podcast = baseContent;
+    // Использование указателей на базовый и производный классы
+    cout << "\nВызов через указатели:\n";
+    Content* ptrBase = &baseContent;
+    Content* ptrPodcast = &podcast;
 
-    cout << "\nПосле присваивания:\n";
-    podcast.print();
+    ptrBase->printInfo();  // Вызов базовой версии
+    ptrPodcast->printInfo();  // Вызов переопределенной версии
+
+    // Демонстрация изменения работы программы, если функция не виртуальная
+    cout << "\nЕсли функция getInfo() не виртуальная:\n";
+    ptrBase->printInfo();  // Всегда вызывает базовую версию
+    ptrPodcast->printInfo();  // Также вызывает базовую версию
 }
