@@ -36,6 +36,63 @@ class Content {
     }
 }
 
+interface Playable {
+    void play();      // Метод для воспроизведения
+    void pause();     // Метод для паузы
+    void stop();      // Метод для остановки
+}
+
+class MusicTrack implements Playable {
+    private String title;
+    private String artist;
+
+    public MusicTrack(String title, String artist) {
+        this.title = title;
+        this.artist = artist;
+    }
+
+    @Override
+    public void play() {
+        System.out.println("Playing music: " + title + " by " + artist);
+    }
+
+    @Override
+    public void pause() {
+        System.out.println("Pausing music: " + title);
+    }
+
+    @Override
+    public void stop() {
+        System.out.println("Stopping music: " + title);
+    }
+}
+
+class Podcast implements Playable {
+    private String title;
+    private String host;
+
+    public Podcast(String title, String host) {
+        this.title = title;
+        this.host = host;
+    }
+
+    @Override
+    public void play() {
+        System.out.println("Playing podcast: " + title + " hosted by " + host);
+    }
+
+    @Override
+    public void pause() {
+        System.out.println("Pausing podcast: " + title);
+    }
+
+    @Override
+    public void stop() {
+        System.out.println("Stopping podcast: " + title);
+    }
+}
+
+
 class PodcastContent extends Content {
     private String host;        // Ведущий подкаста
     private int episodeCount;   // Количество эпизодов
@@ -331,6 +388,20 @@ public class Main {
         for (MediaContent content : mediaLibrary) {
             content.printInfo();
             content.play();
+            System.out.println();
+        }
+
+        Playable[] playables = new Playable[2];
+
+        // Создаем объекты классов, реализующих интерфейс
+        playables[0] = new MusicTrack("Shape of You", "Ed Sheeran");
+        playables[1] = new Podcast("Tech Trends", "John Doe");
+
+        // Воспроизводим, ставим на паузу и останавливаем
+        for (Playable playable : playables) {
+            playable.play();
+            playable.pause();
+            playable.stop();
             System.out.println();
         }
     }
