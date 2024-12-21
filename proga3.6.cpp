@@ -96,9 +96,23 @@ protected:
     string format;  // Формат (например, MP3)
 
 public:
-    // Конструктор базового класса
+    // Конструктор по умолчанию
+    Content() : title(""), artist(""), duration(0.0f), format("") {}
+
+    // Конструктор с параметрами
     Content(const string& t, const string& a, float d, const string& f)
         : title(t), artist(a), duration(d), format(f) {
+    }
+
+    // Оператор присваивания
+    Content& operator=(const Content& other) {
+        if (this != &other) {
+            title = other.title;
+            artist = other.artist;
+            duration = other.duration;
+            format = other.format;
+        }
+        return *this;
     }
 
     virtual void print() const {
@@ -109,6 +123,7 @@ public:
 
 
 
+
 class PodcastContent : public Content {
 private:
     string host;       // Ведущий подкаста
@@ -116,21 +131,36 @@ private:
     string description; // Краткое описание
 
 public:
-    // Конструктор производного класса
+    // Конструктор по умолчанию
+    PodcastContent() : Content(), host(""), episodeCount(0), description("") {}
+
+    // Конструктор с параметрами
     PodcastContent(const string& t, const string& a, float d, const string& f,
         const string& h, int eCount, const string& desc)
-        : Content(t, a, d, f), // Вызов конструктора базового класса
-        host(h), episodeCount(eCount), description(desc) {
+        : Content(t, a, d, f), host(h), episodeCount(eCount), description(desc) {
+    }
+
+    // Оператор присваивания
+    PodcastContent& operator=(const Content& baseObj) {
+        // Вызов оператора присваивания базового класса
+        Content::operator=(baseObj);
+
+        // Поля производного класса остаются неизменными
+        host = "Default Host";   // Можно установить значения по умолчанию
+        episodeCount = 0;
+        description = "Default Description";
+
+        return *this;
     }
 
     void print() const override {
-        // Вызов метода базового класса
-        Content::print();
+        Content::print(); // Вызов метода базового класса
         cout << "Host: " << host
             << "\nEpisodes: " << episodeCount
             << "\nDescription: " << description << endl;
     }
 };
+
 
 
 class Playlist {
@@ -307,10 +337,18 @@ int main() {
     }
     cout << "Текущий прогресс трека: " << trackProgress.currentTime << " секунд\n";
 
-    // Работа с PodcastContent
-    PodcastContent podcast;
-    podcast.setPodcastContent("Научный подкаст", "Science Weekly", 3600.0f, "MP3",
-        "Дмитрий Иванов", 24, "Подкаст о науке и технологиях.");
-    cout << "\nИнформация о подкасте:\n";
+    Content baseContent("Музыкальный трек", "Artist A", 180.0f, "MP3");
+
+    // Создаем объект производного класса
+    PodcastContent podcast("Подкаст о природе", "Science Weekly", 3600.0f, "MP3",
+        "Дмитрий Иванов", 24, "Научный подкаст");
+
+    cout << "До присваивания:\n";
+    podcast.print();
+
+    // Присваивание объекта базового класса объекту производного класса
+    podcast = baseContent;
+
+    cout << "\nПосле присваивания:\n";
     podcast.print();
 }
