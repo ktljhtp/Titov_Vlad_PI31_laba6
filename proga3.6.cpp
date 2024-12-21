@@ -218,16 +218,22 @@ public:
     Playlist() : tracks(nullptr), trackCount(0) {}
 
     Playlist(const Playlist& other) : name_playlist(other.name_playlist), trackCount(other.trackCount) {
-        tracks = new Content[trackCount];
-        for (int i = 0; i < trackCount; i++) {
-            tracks[i] = other.tracks[i];
+        if (trackCount > 0) {
+            tracks = new Content[trackCount];
+            for (int i = 0; i < trackCount; i++) {
+                tracks[i] = other.tracks[i];
+            }
+        }
+        else {
+            tracks = nullptr;
         }
         totalTrackCount += trackCount;
     }
 
     ~Playlist() {
-        totalTrackCount -= trackCount;
         delete[] tracks;
+        tracks = nullptr; // Убедимся, что указатель обнулен
+        totalTrackCount -= trackCount;
     }
 
     Playlist& operator=(const Playlist& other) {
@@ -238,15 +244,22 @@ public:
 
         name_playlist = other.name_playlist;
         trackCount = other.trackCount;
-        tracks = new Content[trackCount];
-        for (int i = 0; i < trackCount; i++) {
-            tracks[i] = other.tracks[i];
+
+        if (trackCount > 0) {
+            tracks = new Content[trackCount];
+            for (int i = 0; i < trackCount; i++) {
+                tracks[i] = other.tracks[i];
+            }
         }
+        else {
+            tracks = nullptr;
+        }
+
         return *this;
     }
 
     void setName(const string& name) {
-        this->name_playlist = name;
+        name_playlist = name;
     }
 
     void add_tracks_to_playlist(int count) {
@@ -297,6 +310,7 @@ public:
 };
 
 int Playlist::totalTrackCount = 0;
+
 
 class User {
 private:
@@ -379,8 +393,6 @@ int main() {
         trackProgress.jump_5sec_timeline(&trackProgress.currentTime);
     }
     cout << "Текущий прогресс трека: " << trackProgress.currentTime << " секунд\n";
-
-    Content baseContent("Музыкальный трек", "Artist A", 180.0f, "MP3");
 
     // Создаем объект базового класса
     Content baseContent("Музыкальный трек", "Artist A", 180.0f, "MP3");
