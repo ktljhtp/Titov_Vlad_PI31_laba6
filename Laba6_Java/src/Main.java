@@ -64,19 +64,19 @@ class PodcastContent extends Content {
     }
 }
 
+// Базовый класс
 class MediaContent {
-    protected String title; // Protected поле доступно в производных классах
+    protected String title;
     protected float duration;
-    protected String format;
 
-    public MediaContent(String title, float duration, String format) {
+    public MediaContent(String title, float duration) {
         this.title = title;
         this.duration = duration;
-        this.format = format;
     }
 
-    public void print() {
-        System.out.println("Media Content: " + title + " (Duration: " + duration + " sec, Format: " + format + ")");
+    // Метод для вывода информации
+    public void printInfo() {
+        System.out.println("Media Content: " + title + " (Duration: " + duration + " sec)");
     }
 }
 
@@ -84,14 +84,16 @@ class MediaContent {
 class MusicContent extends MediaContent {
     private String artist;
 
-    public MusicContent(String title, float duration, String format, String artist) {
-        super(title, duration, format); // Используем protected поля из базового класса
+    public MusicContent(String title, float duration, String artist) {
+        super(title, duration); // Вызов конструктора базового класса
         this.artist = artist;
     }
 
+    // Переопределение метода с вызовом метода базового класса
     @Override
-    public void print() {
-        System.out.println("Music: " + title + " by " + artist + " (Duration: " + duration + " sec, Format: " + format + ")");
+    public void printInfo() {
+        super.printInfo(); // Вызов метода базового класса
+        System.out.println("Artist: " + artist);
     }
 }
 
@@ -293,9 +295,16 @@ public class Main {
 
         scanner.close();
 
-        MusicContent music = new MusicContent("Imagine", 183, "MP3", "John Lennon");
+        MediaContent media = new MediaContent("Generic Media", 120);
+        MusicContent music = new MusicContent("Imagine", 183, "John Lennon");
 
-        music.print();
+        // Демонстрация вызова методов
+        System.out.println("=== Media ===");
+        media.printInfo();
+
+        System.out.println("\n=== Music ===");
+        music.printInfo(); // Вызов метода с использованием базового метода
+        
         podcast.print();
     }
 }
