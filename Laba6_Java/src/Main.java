@@ -17,7 +17,53 @@ class Content {
     public void print() {
         System.out.println("Track: " + title + " by " + artist + " (Duration: " + duration + " sec, Format: " + format + ")");
     }
+
+    // Геттеры
+    public String getTitle() {
+        return title;
+    }
+
+    public String getArtist() {
+        return artist;
+    }
+
+    public float getDuration() {
+        return duration;
+    }
+
+    public String getFormat() {
+        return format;
+    }
 }
+
+
+class PodcastContent extends Content {
+    private String host;        // Ведущий подкаста
+    private int episodeCount;   // Количество эпизодов
+    private String description; // Краткое описание
+
+    public PodcastContent(String title, String artist, float duration, String format,
+                          String host, int episodeCount, String description) {
+        set(title, artist, duration, format); // Используем метод set из базового класса
+        this.host = host;
+        this.episodeCount = episodeCount;
+        this.description = description;
+    }
+
+    public String getInfo() {
+        return "Podcast: " + getTitle() + " by " + getArtist() +
+                " (Duration: " + getDuration() + " sec, Format: " + getFormat() + ")" +
+                "\nHost: " + host +
+                "\nEpisodes: " + episodeCount +
+                "\nDescription: " + description;
+    }
+
+    @Override
+    public void print() {
+        System.out.println(getInfo());
+    }
+}
+
 
 class AudioSettings {
     private int volume;
@@ -186,6 +232,29 @@ public class Main {
                 addMore = scanner.next().charAt(0);
             } while (addMore == 'y' || addMore == 'Y');
         }
+
+        // Демонстрация использования PodcastContent
+        System.out.println("\n=== Демонстрация класса PodcastContent ===");
+        System.out.print("Введите название подкаста: ");
+        String podcastTitle = scanner.next();
+        System.out.print("Введите ведущего подкаста: ");
+        String podcastHost = scanner.next();
+        System.out.print("Введите количество эпизодов: ");
+        int podcastEpisodes = scanner.nextInt();
+        System.out.print("Введите продолжительность подкаста в секундах: ");
+        float podcastDuration = scanner.nextFloat();
+        System.out.print("Введите формат подкаста: ");
+        String podcastFormat = scanner.next();
+        System.out.print("Введите описание подкаста: ");
+        String podcastDescription = scanner.next();
+
+        PodcastContent podcast = new PodcastContent(
+                podcastTitle, "Подкаст", podcastDuration, podcastFormat,
+                podcastHost, podcastEpisodes, podcastDescription
+        );
+
+        System.out.println("\nИнформация о подкасте:");
+        podcast.print();
 
         System.out.println("\nИнформация о пользователях:");
         for (User user : usersArray) {
