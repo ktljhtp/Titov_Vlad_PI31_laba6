@@ -64,8 +64,8 @@ class PodcastContent extends Content {
     }
 }
 
-// Базовый класс
-class MediaContent {
+// Абстрактный класс
+abstract class MediaContent {
     protected String title;
     protected float duration;
 
@@ -74,45 +74,31 @@ class MediaContent {
         this.duration = duration;
     }
 
-    // Метод для вывода информации
+    // Абстрактный метод
+    public abstract void play();
+
+    // Обычный метод
     public void printInfo() {
-        System.out.println("Media Content: " + title + " (Duration: " + duration + " sec)");
+        System.out.println("Title: " + title + ", Duration: " + duration + " sec");
     }
 }
 
-// Производный класс
+// Производный класс для видео
 class VideoContent extends MediaContent {
-    private String resolution; // Разрешение видео (например, 1080p)
+    private String resolution;
 
-    // Конструктор производного класса
     public VideoContent(String title, float duration, String resolution) {
         super(title, duration); // Вызов конструктора базового класса
         this.resolution = resolution;
-        System.out.println("Конструктор VideoContent вызван.");
     }
 
-    // Метод для вывода информации
-    public void printInfo() {
-        System.out.println("Video: " + title + " (Duration: " + duration + " sec, Resolution: " + resolution + ")");
-    }
-}
-
-// Производный класс MusicContent
-class MusicContent extends MediaContent {
-    private String artist;
-
-    public MusicContent(String title, float duration, String artist) {
-        super(title, duration); // Вызов конструктора базового класса
-        this.artist = artist;
-    }
-
-    // Переопределение метода с вызовом метода базового класса
+    // Реализация абстрактного метода
     @Override
-    public void printInfo() {
-        super.printInfo(); // Вызов метода базового класса
-        System.out.println("Artist: " + artist);
+    public void play() {
+        System.out.println("Playing video: " + title + " in resolution " + resolution);
     }
 }
+
 
 class AudioSettings {
     private int volume;
@@ -311,20 +297,24 @@ public class Main {
         }
 
         scanner.close();
-
-        MediaContent media = new MediaContent("Generic Media", 120);
-        MusicContent music = new MusicContent("Imagine", 183, "John Lennon");
-
         // Демонстрация вызова методов
         System.out.println("=== Media ===");
-        media.printInfo();
-
         System.out.println("\n=== Music ===");
-        music.printInfo(); // Вызов метода с использованием базового метода
-
         podcast.print();
-
         VideoContent video = new VideoContent("Nature Documentary", 1800, "1080p");
         video.printInfo();
+
+        // Создание массива объектов абстрактного типа
+        MediaContent[] mediaLibrary = new MediaContent[2];
+
+        // Создаем экземпляры производных классов
+        mediaLibrary[0] = new VideoContent("Documentary", 3600, "1080p");
+
+        // Демонстрация полиморфизма
+        for (MediaContent content : mediaLibrary) {
+            content.printInfo();
+            content.play();
+            System.out.println();
+        }
     }
 }
